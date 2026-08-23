@@ -22,9 +22,9 @@
             "font": "var(--font-body--family)",
             "font_size": "1rem",
             "weight": "",
-            "letter_spacing": "normal",
-            "case": "none",
-            "text_color": ""
+            "letter_spacing": "loose",
+            "case": "uppercase",
+            "text_color": "{{ settings.color_palette.color4 }}"
           },
           "blocks": {}
         }
@@ -36,7 +36,7 @@
       "settings": {
         "speed": 5,
         "section_width": "full-width",
-        "background_color": "{{ settings.color_palette.color3 }}",
+        "background_color": "{{ settings.color_palette.color2 }}",
         "divider_width": 0,
         "divider_color": "",
         "padding-block-start": 15,
@@ -61,8 +61,8 @@
           "static": true,
           "settings": {
             "menu": "main-menu",
-            "background_color": "#fcf9f2",
-            "text_color": "#1c1c18",
+            "background_color": "#fff8f5",
+            "text_color": "#221a15",
             "type_font_primary_size": "0.875rem",
             "menu_font_style": "inverse",
             "type_font_primary_link": "body",
@@ -82,7 +82,7 @@
         }
       },
       "settings": {
-        "logo_position": "center",
+        "logo_position": "left",
         "menu_position": "center",
         "menu_row": "top",
         "customer_account_menu": "customer-account-main-menu",
@@ -103,13 +103,13 @@
         "divider_size": "page-width",
         "divider_color": "",
         "border_width": 1,
-        "bottom_border_color": "#e5e2db",
+        "bottom_border_color": "#747878",
         "actions_display_style": "text",
         "actions_font_size": "0.875rem",
         "actions_font": "body",
         "actions_text_case": "uppercase",
-        "background_color_top": "#fcf9f2",
-        "text_color_top": "#1c1c18",
+        "background_color_top": "#fff8f5",
+        "text_color_top": "#221a15",
         "background_color_bottom": "",
         "text_color_bottom": "",
         "bubble_style": "default",
