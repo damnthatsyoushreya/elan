@@ -1,0 +1,248 @@
+{% schema %}
+{
+  "name": "Custom Image with Text",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "options": [
+        { "value": "page", "label": "Page" },
+        { "value": "full", "label": "Full" }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "equal_columns",
+      "label": "Equal columns",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#E6D7CF"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 120
+    }
+  ],
+  "blocks": [{ "type": "@theme" }, { "type": "@app" }, { "type": "custom-iwt-subheading" }],
+  "presets": [
+    {
+      "name": "Custom Image with Text",
+      "category": "Image",
+      "blocks": [{ "type": "custom-iwt-subheading" }]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt {
+    display: flex;
+    flex-direction: {% if section.settings.media_position == 'right' %}row-reverse{% else %}row{% endif %};
+    align-items: center;
+    justify-content: {% if section.settings.equal_columns %}center{% else %}space-between{% endif %};
+    gap: {{ section.settings.gap }}px;
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  {% if section.settings.width == 'page' %}
+  #shopify-section-{{ section.id }} .c-iwt {
+    max-width: 1440px;
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+  {% else %}
+  #shopify-section-{{ section.id }} .c-iwt {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  {% endif %}
+
+  @media screen and (max-width: 768px) {
+    #shopify-section-{{ section.id }} .c-iwt {
+      flex-direction: column;
+      padding-left: 24px;
+      padding-right: 24px;
+      padding-top: calc({{ section.settings.padding_top }}px / 2);
+      padding-bottom: calc({{ section.settings.padding_bottom }}px / 2);
+      gap: 32px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__image,
+  #shopify-section-{{ section.id }} .c-iwt__content {
+    {% if section.settings.equal_columns %}
+      flex: 1 1 50%;
+    {% else %}
+      flex: none;
+    {% endif %}
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  {% unless section.settings.equal_columns %}
+  #shopify-section-{{ section.id }} .c-iwt__image {
+    width: 662px;
+    max-width: 100%;
+  }
+  #shopify-section-{{ section.id }} .c-iwt__content {
+    width: 368px;
+    max-width: 100%;
+  }
+  {% endunless %}
+
+  #shopify-section-{{ section.id }} .c-iwt__image img,
+  #shopify-section-{{ section.id }} .c-iwt__image svg {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__image svg {
+    background: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__content {
+    align-items: flex-start;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__subheading {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin: 0 0 24px 0;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__heading {
+    font-family: 'Bodoni Moda', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 44px;
+    text-transform: uppercase;
+    color: #000000;
+    margin: 0 0 32px 0;
+    font-variation-settings: 'opsz' 36;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__text {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+    color: #444748;
+    border-left: 1px solid #000000;
+    padding-left: 24px;
+    margin: 0 0 48px 0;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__text p {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 32px;
+    background: #000000;
+    border: 1px solid #000000;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    letter-spacing: 1.8px;
+    color: #FFFFFF;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .c-iwt__button:hover {
+    background: transparent;
+    color: #000000;
+  }
+</style>
+
+<div class="c-iwt">
+  <div class="c-iwt__image">
+    {% if section.settings.image != blank %}
+      {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy' }}
+    {% else %}
+      {{ 'collection-1' | placeholder_svg_tag }}
+    {% endif %}
+  </div>
+
+  <div class="c-iwt__content">
+    {% content_for 'blocks' %}
+  </div>
+</div>
