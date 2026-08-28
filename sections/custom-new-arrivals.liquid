@@ -192,7 +192,7 @@
 
   <div class="{% if section.settings.layout == 'carousel' %}cna-carousel{% else %}cna-grid{% endif %}">
     {% assign max_products = section.settings.max_products %}
-    {% if section.settings.collection != blank %}
+    {% if section.settings.collection != blank and section.settings.collection.products.size > 0 %}
       {% for product in section.settings.collection.products limit: max_products %}
         <div class="cna-item">
           {% render 'product-card', product: product %}
