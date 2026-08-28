@@ -437,7 +437,7 @@
       },
       "name": "t:names.product_list",
       "settings": {
-        "collection": "all",
+        "collection": "dresses",
         "layout_type": "grid",
         "carousel_on_mobile": false,
         "max_products": 8,
@@ -631,7 +631,7 @@
             "link": "",
             "open_in_new_tab": false,
             "placeholder": "",
-            "padding-block-start": 0,
+            "padding-block-start": 16,
             "padding-block-end": 16,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -674,8 +674,8 @@
           "static": true,
           "settings": {
             "placement": "on_image",
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "flex-start",
+            "horizontal_alignment": "center",
+            "vertical_alignment": "flex-end",
             "collection_card_gap": 8,
             "background_color": "",
             "border": "none",
@@ -714,7 +714,7 @@
               "type": "_collection-card-image",
               "static": true,
               "settings": {
-                "image_ratio": "portrait",
+                "image_ratio": "adapt",
                 "toggle_overlay": false,
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
@@ -738,8 +738,15 @@
       ],
       "name": "t:names.collection_list",
       "settings": {
-        "collection_list": [],
-        "layout_type": "bento",
+        "collection_list": [
+          "bags",
+          "jewelry",
+          "shoes",
+          "bottoms",
+          "accessories",
+          "dresses"
+        ],
+        "layout_type": "editorial",
         "carousel_on_mobile": true,
         "columns": 4,
         "mobile_columns": "2",
@@ -752,7 +759,7 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 12,
-        "background_color": "{{ settings.color_palette.background }}",
+        "background_color": "{{ settings.color_palette.color2 }}",
         "padding-block-start": 48,
         "padding-block-end": 64
       }
