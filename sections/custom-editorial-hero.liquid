@@ -43,7 +43,7 @@
   .custom-editorial-image-container {
     width: 100%;
     max-width: 956px;
-    height: 819px;
+    height: auto;
     max-height: 80vh;
     display: flex;
     justify-content: center;
@@ -133,7 +133,19 @@
       >
         <div class="custom-editorial-inner">
           {% if block.settings.image != blank %}
-            <div class="custom-editorial-image-container">
+            {% liquid
+              assign aspect_ratio = block.settings.image_aspect_ratio
+              if aspect_ratio == 'auto'
+                assign aspect_ratio_css = block.settings.image.aspect_ratio | default: 1.0
+              elsif aspect_ratio == 'portrait'
+                assign aspect_ratio_css = '4 / 5'
+              elsif aspect_ratio == 'square'
+                assign aspect_ratio_css = '1 / 1'
+              elsif aspect_ratio == 'landscape'
+                assign aspect_ratio_css = '16 / 9'
+              endif
+            %}
+            <div class="custom-editorial-image-container" style="aspect-ratio: {{ aspect_ratio_css }};">
               {{
                 block.settings.image
                 | image_url: width: 1500
@@ -326,6 +338,30 @@
           "type": "image_picker",
           "id": "image",
           "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "image_aspect_ratio",
+          "label": "Image Aspect Ratio",
+          "options": [
+            {
+              "value": "auto",
+              "label": "Original (Auto)"
+            },
+            {
+              "value": "portrait",
+              "label": "Portrait (4:5)"
+            },
+            {
+              "value": "square",
+              "label": "Square (1:1)"
+            },
+            {
+              "value": "landscape",
+              "label": "Landscape (16:9)"
+            }
+          ],
+          "default": "portrait"
         },
         {
           "type": "text",
