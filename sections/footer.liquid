@@ -204,12 +204,14 @@
         <img src="{{ section.settings.logo_default | image_url: width: section.settings.logo_max_width }}" 
              alt="{{ shop.name }}" 
              loading="lazy" 
-             width="{{ section.settings.logo_max_width }}">
+             width="{{ section.settings.logo_max_width }}"
+             height="{{ section.settings.logo_max_width | divided_by: section.settings.logo_default.aspect_ratio | round }}">
       {% elsif section.settings.logo_style == 'inverted' and section.settings.logo_inverted != blank %}
         <img src="{{ section.settings.logo_inverted | image_url: width: section.settings.logo_max_width }}" 
              alt="{{ shop.name }}" 
              loading="lazy" 
-             width="{{ section.settings.logo_max_width }}">
+             width="{{ section.settings.logo_max_width }}"
+             height="{{ section.settings.logo_max_width | divided_by: section.settings.logo_inverted.aspect_ratio | round }}">
       {% else %}
         <h2 class="custom-footer-logo-text">{{ shop.name }}</h2>
       {% endif %}
