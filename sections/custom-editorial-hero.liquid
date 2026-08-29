@@ -1,0 +1,397 @@
+<style>
+  .custom-editorial-hero {
+    position: relative;
+    width: 100%;
+    background-color: {{ section.settings.bg_color }};
+  }
+
+  .custom-editorial-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .custom-editorial-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transform-origin: center center;
+  }
+
+  .custom-editorial-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 120px 64px;
+    width: 100%;
+    max-width: 1440px;
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .custom-editorial-image-container {
+    width: 100%;
+    max-width: 956px;
+    height: 819px;
+    max-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transform-origin: center center;
+  }
+
+  .custom-editorial-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .custom-editorial-text-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    pointer-events: none;
+    transform-origin: center center;
+  }
+
+  .custom-editorial-heading {
+    font-family: 'Bodoni Moda', serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 96px;
+    line-height: 1;
+    text-align: center;
+    letter-spacing: -4.8px;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .custom-editorial-text {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  .custom-editorial-divider {
+    position: absolute;
+    height: 1px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: {{ section.settings.divider_color }};
+    z-index: 100;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .custom-editorial-heading {
+      font-size: 72px;
+      letter-spacing: -3.6px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .custom-editorial-inner {
+      padding: 60px 20px;
+    }
+    .custom-editorial-heading {
+      font-size: 48px;
+      letter-spacing: -2.4px;
+    }
+    .custom-editorial-text {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<div class="custom-editorial-hero" id="CustomEditorialHero-{{ section.id }}">
+  <div class="custom-editorial-sticky">
+    {% for block in section.blocks %}
+      <div
+        class="custom-editorial-item"
+        {{ block.shopify_attributes }}
+        style="z-index: {{ forloop.index }}; background-color: {{ block.settings.bg_color | default: section.settings.bg_color }};"
+      >
+        <div class="custom-editorial-inner">
+          {% if block.settings.image != blank %}
+            <div class="custom-editorial-image-container">
+              {{
+                block.settings.image
+                | image_url: width: 1500
+                | image_tag: class: 'custom-editorial-image', loading: 'lazy'
+              }}
+            </div>
+          {% endif %}
+
+          {% if block.settings.heading != blank or block.settings.text != blank %}
+            <div class="custom-editorial-text-container" style="mix-blend-mode: {{ block.settings.mix_blend_mode }};">
+              {% if block.settings.heading != blank %}
+                <h2 class="custom-editorial-heading" style="color: {{ block.settings.text_color }};">
+                  {{ block.settings.heading }}
+                </h2>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <div class="custom-editorial-text" style="color: {{ block.settings.text_color }};">
+                  {{ block.settings.text }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if section.settings.show_divider %}
+      <div class="custom-editorial-divider"></div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function() {
+    class CustomEditorialHero {
+      constructor(hero) {
+        this.hero = hero;
+        this.items = hero.querySelectorAll('.custom-editorial-item');
+        this.totalItems = this.items.length;
+        if (this.totalItems === 0) return;
+        
+        this.hero.style.height = (this.totalItems * 100) + 'vh';
+        this.looping = false;
+        
+        this.updateAnimations = this.updateAnimations.bind(this);
+        this.tick = this.tick.bind(this);
+        
+        // Use IntersectionObserver to run animation loop only when visible
+        // This completely bypasses issues with custom scroll wrappers not firing window scroll events
+        if (window.IntersectionObserver) {
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                this.startLoop();
+              } else {
+                this.stopLoop();
+              }
+            });
+          });
+          this.observer.observe(this.hero);
+        } else {
+          // Fallback if IntersectionObserver is somehow not available
+          this.startLoop(); 
+        }
+        
+        this.updateAnimations();
+      }
+
+      startLoop() {
+        if (this.looping) return;
+        this.looping = true;
+        window.requestAnimationFrame(this.tick);
+      }
+
+      stopLoop() {
+        this.looping = false;
+      }
+
+      tick() {
+        if (!this.looping) return;
+        this.updateAnimations();
+        window.requestAnimationFrame(this.tick);
+      }
+      
+      updateAnimations() {
+        if (!this.hero) return;
+        var rect = this.hero.getBoundingClientRect();
+        var windowHeight = window.innerHeight;
+        
+        var scrollProgress = -rect.top;
+        var maxScroll = (this.totalItems - 1) * windowHeight;
+        
+        scrollProgress = Math.max(0, Math.min(maxScroll, scrollProgress));
+        
+        this.items.forEach(function(item, index) {
+          var localProgress = (scrollProgress / windowHeight) - index;
+          
+          var textContainer = item.querySelector('.custom-editorial-text-container');
+          var imageContainer = item.querySelector('.custom-editorial-image-container');
+          
+          if (localProgress <= -1) {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(100%)';
+            item.style.pointerEvents = 'none';
+          } else if (localProgress > -1 && localProgress < 0) {
+            item.style.opacity = '1';
+            var yPercent = -localProgress * 100;
+            item.style.transform = 'translateY(' + yPercent + '%)';
+            item.style.pointerEvents = 'none';
+            
+            if (textContainer) {
+              textContainer.style.transform = 'translate(-50%, -50%) scale(1)';
+              textContainer.style.opacity = '1';
+            }
+            if (imageContainer) {
+               imageContainer.style.transform = 'scale(1)';
+            }
+          } else if (localProgress >= 0 && localProgress <= 1) {
+            item.style.pointerEvents = 'auto';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0%)';
+            
+            if (textContainer) {
+              var textScale = 1 + (localProgress * 12);
+              textContainer.style.transform = 'translate(-50%, -50%) scale(' + textScale + ')';
+              textContainer.style.opacity = '1';
+            }
+            if (imageContainer) {
+              var imgScale = 1 + (localProgress * 0.4);
+              imageContainer.style.transform = 'scale(' + imgScale + ')';
+            }
+          } else {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0%)';
+            item.style.pointerEvents = 'none';
+          }
+        });
+      }
+    }
+
+    function initAllHeroes() {
+      var heroes = document.querySelectorAll('.custom-editorial-hero');
+      heroes.forEach(function(hero) {
+        if (!hero.dataset.initialized) {
+          new CustomEditorialHero(hero);
+          hero.dataset.initialized = 'true';
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAllHeroes);
+    } else {
+      initAllHeroes();
+    }
+
+    document.addEventListener('shopify:section:load', initAllHeroes);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Editorial Hero",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Global Background Color",
+      "default": "#FFF8F5"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show Bottom Divider",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider Color",
+      "default": "#8F4A4E"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Editorial"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Slide Background Color",
+          "info": "Will use global background color if blank",
+          "default": "#FFF8F5"
+        },
+        {
+          "type": "select",
+          "id": "mix_blend_mode",
+          "label": "Text Mix Blend Mode",
+          "options": [
+            {
+              "value": "normal",
+              "label": "Normal"
+            },
+            {
+              "value": "difference",
+              "label": "Difference"
+            },
+            {
+              "value": "exclusion",
+              "label": "Exclusion"
+            }
+          ],
+          "default": "difference"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Hero",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "Editorial"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "heading": "New Arrivals"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
