@@ -62,15 +62,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 100%;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     z-index: 10;
     pointer-events: none;
-    transform-origin: center center;
+    max-width: calc(100% - 128px);
   }
 
   .custom-editorial-heading {
@@ -79,7 +74,6 @@
     font-weight: 700;
     font-size: 96px;
     line-height: 1;
-    text-align: center;
     letter-spacing: -4.8px;
     text-transform: uppercase;
     margin: 0;
@@ -88,7 +82,6 @@
   .custom-editorial-text {
     font-family: 'Bodoni Moda', serif;
     font-size: 24px;
-    text-align: center;
     margin-top: 24px;
   }
 
@@ -155,7 +148,58 @@
           {% endif %}
 
           {% if block.settings.heading != blank or block.settings.text != blank %}
-            <div class="custom-editorial-text-container" style="mix-blend-mode: {{ block.settings.mix_blend_mode }};">
+            {% liquid
+              assign v_pos = block.settings.heading_vertical_position
+              assign h_pos = block.settings.heading_horizontal_position
+              
+              assign top_val = 'auto'
+              assign bottom_val = 'auto'
+              assign ty = '0'
+              assign origin_y = v_pos
+              
+              if v_pos == 'top'
+                assign top_val = '120px'
+              elsif v_pos == 'middle'
+                assign top_val = '50%'
+                assign ty = '-50%'
+                assign origin_y = 'center'
+              elsif v_pos == 'bottom'
+                assign bottom_val = '120px'
+              endif
+              
+              assign left_val = 'auto'
+              assign right_val = 'auto'
+              assign tx = '0'
+              assign align_items = 'center'
+              assign text_align = h_pos
+              assign origin_x = h_pos
+              
+              if h_pos == 'left'
+                assign left_val = '64px'
+                assign align_items = 'flex-start'
+              elsif h_pos == 'center'
+                assign left_val = '50%'
+                assign tx = '-50%'
+              elsif h_pos == 'right'
+                assign right_val = '64px'
+                assign align_items = 'flex-end'
+              endif
+            %}
+            <div 
+              class="custom-editorial-text-container" 
+              style="
+                mix-blend-mode: {{ block.settings.mix_blend_mode }};
+                top: {{ top_val }};
+                bottom: {{ bottom_val }};
+                left: {{ left_val }};
+                right: {{ right_val }};
+                align-items: {{ align_items }};
+                text-align: {{ text_align }};
+                transform-origin: {{ origin_y }} {{ origin_x }};
+              "
+              data-tx="{{ tx }}"
+              data-ty="{{ ty }}"
+            >
               {% if block.settings.heading != blank %}
                 <h2 class="custom-editorial-heading" style="color: {{ block.settings.text_color }};">
                   {{ block.settings.heading }}
@@ -257,7 +301,9 @@
             item.style.pointerEvents = 'none';
             
             if (textContainer) {
-              textContainer.style.transform = 'translate(-50%, -50%) scale(1)';
+              var tx = textContainer.getAttribute('data-tx') || '-50%';
+              var ty = textContainer.getAttribute('data-ty') || '-50%';
+              textContainer.style.transform = 'translate(' + tx + ', ' + ty + ') scale(1)';
               textContainer.style.opacity = '1';
             }
             if (imageContainer) {
@@ -269,8 +315,10 @@
             item.style.transform = 'translateY(0%)';
             
             if (textContainer) {
+              var tx = textContainer.getAttribute('data-tx') || '-50%';
+              var ty = textContainer.getAttribute('data-ty') || '-50%';
               var textScale = 1 + (localProgress * 12);
-              textContainer.style.transform = 'translate(-50%, -50%) scale(' + textScale + ')';
+              textContainer.style.transform = 'translate(' + tx + ', ' + ty + ') scale(' + textScale + ')';
               textContainer.style.opacity = '1';
             }
             if (imageContainer) {
@@ -373,6 +421,28 @@
           "type": "textarea",
           "id": "text",
           "label": "Text"
+        },
+        {
+          "type": "select",
+          "id": "heading_vertical_position",
+          "label": "Heading Vertical Position",
+          "options": [
+            { "value": "top", "label": "Top" },
+            { "value": "middle", "label": "Middle" },
+            { "value": "bottom", "label": "Bottom" }
+          ],
+          "default": "middle"
+        },
+        {
+          "type": "select",
+          "id": "heading_horizontal_position",
+          "label": "Heading Horizontal Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
         },
         {
           "type": "color",
